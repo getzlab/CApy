@@ -1,4 +1,5 @@
 import numpy as np
+import pandas as pd
 
 B = dict(zip(list("ACGT"), range(0, 4)));
 
@@ -24,3 +25,14 @@ def c65_to_ch96(c65, newbase):
 	nbidx[~A_idx & (nbidx >= 2)] = nbidx[~A_idx & (nbidx >= 2)] - 1;
 
 	return ((~A_idx)*48 + 16*nbidx) | (c32 & 0xF);
+
+# strings for printing context
+bc = np.array(['A->C', 'A->G', 'A->T', 'C->A', 'C->G', 'C->T']);
+b = np.array(list("ACGT"));
+y = np.r_[0:96];
+ch96_def = pd.Series(["".join(x) for x in
+                      zip(b[np.right_shift(y & 0xC, 2)], 96*["("],
+                          bc[np.right_shift(y & 0x70, 4)], 96*[")"], b[y & 3])])
+
+def print_ch96():
+	return ch96_def
