@@ -26,6 +26,12 @@ def c65_to_ch96(c65, newbase):
 
 	return ((~A_idx)*48 + 16*nbidx) | (c32 & 0xF);
 
+def c65_to_c32(c65):
+	GT_idx = (c65 & 0x20) > 0;
+	c32 = c65;
+	c32[GT_idx] = c32LuT[c32[GT_idx]]; 
+	return c32
+
 # strings for printing context
 bc = np.array(['A->C', 'A->G', 'A->T', 'C->A', 'C->G', 'C->T']);
 b = np.array(list("ACGT"));
