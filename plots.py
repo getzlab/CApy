@@ -42,11 +42,12 @@ def lego(ch96_counts):
 	xc, yc = np.meshgrid(np.r_[0:12], np.r_[0:8]);
 
 	plt.figure(); plt.clf()
-	ax = plt.axes(projection = '3d', proj_type = 'ortho', azim = -123)
+	ax = plt.axes(projection = '3d', proj_type = 'ortho', azim = 60)
 
 	# TODO: specify z-index of each bar individually
 	#np.fliplr(xc + np.r_[0:88:11][:, None] + yc)
 
 	ax.bar3d(xc.ravel(), yc.ravel(), 0, 0.8, 0.8, ch96_counts[ch96_grid].ravel(), lego_colors.reshape([96, 3, -1]).squeeze(), edgecolor = 'k', shade = False, zsort = 'max')
+	ax.set_xlim3d(12.4, -0.6)
 
 	return ax
