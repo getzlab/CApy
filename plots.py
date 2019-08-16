@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 
 #
-# LEGO plots
+# LEGO plots {{{
 
 #  TCAG
 # T
@@ -51,3 +51,17 @@ def lego(ch96_counts):
 	ax.set_xlim3d(12.4, -0.6)
 
 	return ax
+
+# }}}
+
+def logticks(mn, mx):
+	minb = np.floor(np.log10(mn))
+	maxb = np.floor(np.log10(mx))
+
+	t = [];
+	for i in np.r_[minb:(maxb + 1)]:
+		t.extend(np.r_[1:10]*10.0**i)
+
+	t = np.array(t); t = t[~((t < mn) | (t > mx))];
+
+	return t
