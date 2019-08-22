@@ -1,1 +1,1 @@
-__all__ = ["seq", "txt", "context", "firecloud", "plots"];
+__all__ = ["seq", "txt", "context", "firecloud", "plots", "num"];
