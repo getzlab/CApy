@@ -15,5 +15,13 @@ class FC:
 
 		return pd.DataFrame(ws_names, columns = ["workspace", "ttype", "namespace"])
 
+	def _get_all_workspace_names(self):
+		return pd.DataFrame(
+		  [(y["name"], y["namespace"]) for y in
+		    [x["workspace"] for x in self.ws_list ]],
+	      columns = ["workspace", "namespace"]
+		)
+
 fc = FC();
 get_TCGA_workspace_names = fc._get_TCGA_workspace_names
+get_all_workspace_names = fc._get_all_workspace_names
