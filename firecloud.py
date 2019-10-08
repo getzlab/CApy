@@ -4,7 +4,10 @@ import pandas as pd
 
 class FC:
 	def __init__(self):
-		self.ws_list = dalmatian.firecloud.api.list_workspaces().json();
+		try:
+			self.ws_list = dalmatian.firecloud.api.list_workspaces().json();
+		except Exception as e:
+			print(e)
 
 	def _get_TCGA_workspace_names(self):
 		ws_names = [(y["name"],
