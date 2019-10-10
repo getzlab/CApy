@@ -33,6 +33,10 @@ class _FA:
 		l = _np.cumsum(_np.r_[0, self.chrlens])
 		return l[chr - 1] + pos
 
+	@__auto_reset_reference
+	def _get_chrlens(self, ref = None):
+		return self.chrlens
+
 	def __set_reference(self, ref):
 		self.ref_fa_file = ref
 		self.ref_fa_obj = _Fasta(self.ref_fa_file)
@@ -42,3 +46,4 @@ class _FA:
 _fa = _FA();
 genome_region = _fa._genome_region
 chrpos2gpos = _fa._chrpos2gpos
+get_chrlens = _fa._get_chrlens
