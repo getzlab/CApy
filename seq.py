@@ -74,7 +74,7 @@ class _gnomad:
 			           ]
 
 			return [self.mm_1bit[offset + int((pos - g_start)/8)] &
-			        (0x80 >> ((pos - 1) % 8)) > 0 for pos, offset, g_start in gpos_off]
+			        (0x80 >> ((pos - g_start) % 8)) > 0 for pos, offset, g_start in gpos_off]
 		else:
 			pass
 			#np.flatnonzero(np.unpackbits(np.frombuffer(self.mm_1bit[int(start/8):int(end/8)], dtype = np.uint8))) + 1
