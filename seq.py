@@ -79,10 +79,14 @@ class _gnomad:
 			pass
 			#np.flatnonzero(np.unpackbits(np.frombuffer(self.mm_1bit[int(start/8):int(end/8)], dtype = np.uint8))) + 1
 
-#	def _query_1bit_raw(self, ch, start, end):
-#		[gst_off, gen_off] = [(x, np.digitize(x, self.obit_idx["g_start"]) - 1) for x in chrpos2gpos(ch, [start, end])]
-#
-#		return np.frombuffer(self.mm_1bit[int(start/8):int(end/8)], dtype = np.uint8)
+	def _query_1bit_raw(self, ch, start, end):
+		if _np.size(_np.unique(ch)) > 1:
+			raise ValueError("Cannot (yet) query multiple chromosomes simultaneously")
+
+		offset = self.obit_idx.loc[_np.digitize(chrpos2gpos(ch, start), self.obit_idx["g_start"]) - 1, "offset"]
+
+		return _np.frombuffer(self.mm_1bit[(offset + int(start/8)):(offset + int(_np.ceil(end/8)))], dtype = _np.uint8)
 
 _gnmd = _gnomad()
 query_gnomad_1bit = _gnmd._query_1bit
+query_gnomad_1bit_raw = _gnmd._query_1bit_raw
