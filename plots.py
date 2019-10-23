@@ -65,3 +65,13 @@ def logticks(mn, mx):
 	t = np.array(t); t = t[~((t < mn) | (t > mx))];
 
 	return t
+
+def hide_spines(ax = None):
+	if ax is None:
+		ax = plt.gca()
+
+	ax.spines["top"].set_visible(False)
+	ax.spines["right"].set_visible(False)
+
+	ax.spines["left"].set_position(("axes", -0.03))
+	ax.spines["bottom"].set_position(("axes", -0.03))
