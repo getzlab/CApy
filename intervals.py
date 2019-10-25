@@ -17,8 +17,8 @@ def get_chrlen(assembly='hg19',primary=True):
     except:
        print("Error: reference url invalid")
 
-   # Only return primary nuclear contigs
-   if primary:
+    # Only return primary nuclear contigs
+    if primary:
         C = C[C['chr'].str.match('chr(\d+|X|Y)$')]
         C['num'] = C['chr'].str.replace('chr','').str.replace('X','23').str.replace('Y','24').astype(int)
         C = C.sort_values('num').reset_index(drop=True)
