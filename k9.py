@@ -1,4 +1,5 @@
 import copy
+import itertools
 
 _default_config = {
   "name" : "",
@@ -25,3 +26,7 @@ _default_config = {
 
 def get_default_config():
 	return copy.deepcopy(_default_config)
+
+def override_all_localizations(conf):
+	if "localization" in conf and len(conf["inputs"].keys()) > 0:
+		conf["localization"]["overrides"] = dict(itertools.zip_longest(conf["inputs"].keys(), [None]));
