@@ -14,7 +14,7 @@ _default_config = {
     "tot_node_count" : 5
   },
   "localization" : {
-    "strategy" : "Local"
+    "strategy" : "NFS"
   },
 
   "inputs" : { },
