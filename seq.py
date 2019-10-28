@@ -4,6 +4,10 @@ import sys as _sys
 import mmap as _mmap
 import pandas as _pd
 
+#
+# Reference genome functions
+# 
+
 # wrap in a class because we only want to remember which reference we're using,
 # so we don't have to instantiate it every time genome_region is called
 class _FA:
@@ -36,6 +40,15 @@ class _FA:
 		return l[chr - 1] + pos
 
 	@__auto_reset_reference
+	def _gpos2chrpos(self, gpos, ref = None):
+		# TODO: handle implicit chr conversion better
+		#       currently, this only works with b37-style names, and assumes
+		#       chr1 comes first
+		l = _np.cumsum(_np.r_[0, self.chrlens])
+		chridx = _np.digitize(gpos, l);
+		return (chridx, gpos - l[chridx - 1])
+
+	@__auto_reset_reference
 	def _get_chrlens(self, ref = None):
 		return self.chrlens
 
@@ -48,7 +61,12 @@ class _FA:
 _fa = _FA();
 genome_region = _fa._genome_region
 chrpos2gpos = _fa._chrpos2gpos
+gpos2chrpos = _fa._gpos2chrpos
 get_chrlens = _fa._get_chrlens
+
+#
+# gnomAD functions
+# 
 
 class _gnomad:
 	def __init__(self, gnomad_dir = "/mnt/j/db/hg19/gnomad", ref = None):
