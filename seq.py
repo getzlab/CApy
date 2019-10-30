@@ -68,18 +68,28 @@ get_chrlens = _fa._get_chrlens
 # gnomAD functions
 # 
 
+ # TODO: update bin_stem to final when we generate with chrX
 class _gnomad:
-	def __init__(self, gnomad_dir = "/mnt/j/db/hg19/gnomad", ref = None):
+	def __init__(self, gnomad_dir = "/mnt/j/db/hg19/gnomad", bin_stem = "chr1-22", ref = None):
 		self.gnomad_dir = gnomad_dir
-		self.obit_idx = _pd.read_parquet(gnomad_dir + "/1bit/chr1-22.index.parquet") # TODO: update to final when we generate with chrX
+		self.bin_stem = bin_stem
+		self.obit_idx = _pd.read_parquet(gnomad_dir + "/1bit/" + bin_stem + ".index.parquet")
 		self.ref = ref
 
-		f = open(self.gnomad_dir + "/1bit/chr1-22.bin", "rb"); # TODO: update to final when we generate with chrX
-		self.mm_1bit = _mmap.mmap(f.fileno(), 0, _mmap.MAP_SHARED, prot = _mmap.PROT_READ);
-		f.close()
+		self.mm_1bit = None
+		self.__mmap()
 
 	def __del__(self):
-		self.mm_1bit.close()
+		if self.mm_1bit is not None:
+			self.mm_1bit.close()
+
+	def __mmap(self):
+		if self.mm_1bit is not None:
+			self.mm_1bit.close()
+
+		f = open(self.gnomad_dir + "/1bit/" + self.bin_stem + ".bin", "rb");
+		self.mm_1bit = _mmap.mmap(f.fileno(), 0, _mmap.MAP_SHARED, prot = _mmap.PROT_READ);
+		f.close()
 
 	def _query_1bit(self, ch, start, end = None):
 		if end is None:
@@ -105,6 +115,16 @@ class _gnomad:
 
 		return _np.frombuffer(self.mm_1bit[(offset + int(start/8)):(offset + int(_np.ceil(end/8)))], dtype = _np.uint8)
 
+	# TODO: make this a decorator a la FASTA class?
+	def _set_gnomad_ref_params(self, **kwargs):
+		p = ["gnomad_dir", "bin_stem", "ref"]
+		for arg, val in kwargs.items():
+			if arg in p and val is not None:
+				setattr(self, arg, val)
+
+		self.__mmap()
+
 _gnmd = _gnomad()
 query_gnomad_1bit = _gnmd._query_1bit
 query_gnomad_1bit_raw = _gnmd._query_1bit_raw
+set_gnomad_ref_params = _gnmd._set_gnomad_ref_params
