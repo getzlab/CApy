@@ -38,11 +38,19 @@ lego_colors = np.array([0,   0.2, 0.8,
                         1,   1,   0]).reshape(-1, 3);
 lego_colors = lego_colors[np.right_shift(ch96_grid & 0x70, 4)];
 
-def lego(ch96_counts):
+def lego(ch96_counts, fnum = None, axes = None):
 	xc, yc = np.meshgrid(np.r_[0:12], np.r_[0:8]);
 
-	plt.figure(); plt.clf()
-	ax = plt.axes(projection = '3d', proj_type = 'ortho', azim = 60)
+	if axes is None:
+		if fnum is None:
+			f = plt.figure(); plt.clf()
+			fnum = f.number
+		else:
+			f = plt.figure(fnum)
+
+		ax = f.add_subplot(projection = '3d', proj_type = 'ortho', azim = 60)
+	else:
+		ax = axes
 
 	# TODO: specify z-index of each bar individually
 	#np.fliplr(xc + np.r_[0:88:11][:, None] + yc)
