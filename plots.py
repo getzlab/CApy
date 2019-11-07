@@ -57,6 +57,8 @@ def lego(ch96_counts, fnum = None, axes = None):
 
 	ax.bar3d(xc.ravel(), yc.ravel(), 0, 0.8, 0.8, ch96_counts[ch96_grid].ravel(), lego_colors.reshape([96, 3, -1]).squeeze(), edgecolor = 'k', shade = False, zsort = 'max')
 	ax.set_xlim3d(12.4, -0.6)
+	ax.set_xticks([])
+	ax.set_yticks([])
 
 	return ax
 
