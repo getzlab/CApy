@@ -79,15 +79,17 @@ def logticks(mn, mx):
 #
 # spine manipulation {{{
 
-def hide_spines(ax = None):
+def hide_spines(ax = None, offset = None):
 	if ax is None:
 		ax = plt.gca()
+	if offset is None:
+		offset = -0.03
 
 	ax.spines["top"].set_visible(False)
 	ax.spines["right"].set_visible(False)
 
-	ax.spines["left"].set_position(("axes", -0.03))
-	ax.spines["bottom"].set_position(("axes", -0.03))
+	ax.spines["left"].set_position(("axes", offset))
+	ax.spines["bottom"].set_position(("axes", offset))
 
 def spine_bounds(ax = None, t = None, r = None, b = None, l = None): 
 	if ax is None:
