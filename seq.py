@@ -107,9 +107,14 @@ class _gnomad:
 			pass
 			#np.flatnonzero(np.unpackbits(np.frombuffer(self.mm_1bit[int(start/8):int(end/8)], dtype = np.uint8))) + 1
 
-	def _query_1bit_raw(self, ch, start, end):
+	def _query_1bit_raw(self, ch, start = None, end = None):
 		if _np.size(_np.unique(ch)) > 1:
 			raise ValueError("Cannot (yet) query multiple chromosomes simultaneously")
+
+		if start is None:
+			start = 1
+		if end is None:
+			end = get_chrlens(ref = self.ref)[ch - 1]
 
 		offset = self.obit_idx.loc[_np.digitize(chrpos2gpos(ch, start), self.obit_idx["g_start"]) - 1, "offset"]
 
