@@ -1,4 +1,4 @@
-from pyfaidx import Fasta as _Fasta
+from pyfaidx import Fasta as _Fasta, FastaNotFoundError as _FastaNotFoundError
 import numpy as _np
 import sys as _sys
 import mmap as _mmap
@@ -53,9 +53,12 @@ class _FA:
 		return self.chrlens
 
 	def __set_reference(self, ref):
-		self.ref_fa_file = ref
-		self.ref_fa_obj = _Fasta(self.ref_fa_file)
-		self.chrlens = _np.array([len(x) for x in self.ref_fa_obj.records.values()]);
+		try:
+			self.ref_fa_file = ref
+			self.ref_fa_obj = _Fasta(self.ref_fa_file)
+			self.chrlens = _np.array([len(x) for x in self.ref_fa_obj.records.values()]);
+		except _FastaNotFoundError:
+			print("Could not load reference genome!")
 
 # export public functions
 _fa = _FA();
