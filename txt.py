@@ -8,7 +8,7 @@ def parsein(X, col, regex, fields):
 	return pd.concat([X, T], 1)
 
 def parse(X, regex, fields):
-	T = X.str.extract(regex).rename(columns = dict(zip(range(0, len(fields)), fields)));
+	T = X.str.extract(regex).rename(columns = dict(enumerate(fields)))
 	return T
 
 def print_full(D):
