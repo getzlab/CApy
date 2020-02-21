@@ -65,12 +65,13 @@ def filter_mutations_against_gnomAD(M, ref = None, field_map = None, gnomad_dir 
 			bitwise_overlap = g & m 
 			bwol_idx = _np.flatnonzero(bitwise_overlap)
 
-			# unpack bitwise intersection to coordinates and append to DF
-			ol_pos = _np.hstack([
-					_byte_LuT[byte] + 8*idx for byte, idx in
-			        zip(bitwise_overlap[bwol_idx], bwol_idx)
-			]) + 1
-			O.append(_pd.DataFrame({ "chr" : ch, "pos" : ol_pos, "allele" : base }))
+			if len(bwol_idx) > 0:
+				# unpack bitwise intersection to coordinates and append to DF
+				ol_pos = _np.hstack([
+						_byte_LuT[byte] + 8*idx for byte, idx in
+						zip(bitwise_overlap[bwol_idx], bwol_idx)
+				]) + 1
+				O.append(_pd.DataFrame({ "chr" : ch, "pos" : ol_pos, "allele" : base }))
 
 	O = _pd.concat(O)
 
