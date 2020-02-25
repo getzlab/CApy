@@ -3,7 +3,7 @@ import numpy as np
 import pandas as pd
 
 class FWB:
-	def __init__(self, filename, index = None):
+	def __init__(self, filename, index = None, nullval = -1):
 		# TODO: check if file exists
 		# ...
 
@@ -14,6 +14,7 @@ class FWB:
 		f = open(filename, "rb")
 		self.mapped_fwb = mmap.mmap(f.fileno(), 0, prot = mmap.PROT_READ)
 		f.close()
+		sz = self.mapped_fwb.size()
 
 		self.fwi = pd.read_csv(index, sep = "\t", names = ["chr", "start", "end"], index_col = "chr")
 		self.fwi["cum_offset"] = np.cumsum(np.r_[0, (self.fwi["end"] - self.fwi["start"] + 1)[1:]])
@@ -25,10 +26,19 @@ class FWB:
 		# sort to allow for binary search within a chromosome
 		self.fwi = self.fwi.groupby("chr").apply(lambda x : x.sort_values("start")).droplevel(0)
 
-		# TODO: needs to be inferred or specified
-		self.width = 16
+		# infer width
+		tot_len = np.sum(self.fwi["end"] - self.fwi["start"] + 1)
 
-		self.nullval = -1
+		# TODO: handle < 8 bit tracks
+		if sz < tot_len:
+			raise NotImplementedError("Currently, < 8 bit FWBs are unsupported!")
+
+		if sz > tot_len and sz % tot_len != 0:
+			raise ValueError("FWB is not correct width for index!")
+
+		self.width = int(8*sz//tot_len)
+
+		self.nullval = nullval
 
 	def _get_offset(self, chr, pos):
 		"""
