@@ -1,9 +1,10 @@
 import mmap
 import numpy as np
 import pandas as pd
+import sys
 
 class FWB:
-	def __init__(self, filename, index = None, nullval = -1):
+	def __init__(self, filename, index = None, nullval = -1, debug = False):
 		# TODO: check if file exists
 		# ...
 
@@ -39,6 +40,8 @@ class FWB:
 		self.width = int(8*sz//tot_len)
 
 		self.nullval = nullval
+
+		self.debug = debug
 
 	def _get_offset(self, chr, pos):
 		"""
@@ -78,8 +81,11 @@ class FWB:
 
 		# group by chromosome to make lookups faster
 		a = 0
-		for _, Qc in Q.groupby("chr"):
-			offsets[a:(a + Qc.shape[0])] = self._get_offset(Qc["chr"], Qc["start"])*bytewidth
+		for c, Qc in Q.groupby("chr"):
+			if self.debug:
+				print("Getting {}".format(c), file = sys.stderr)
+
+			offsets[a:(a + Qc.shape[0])] = self._get_offset(pd.Series(c), Qc["start"])*bytewidth
 			a += Qc.shape[0] 
 		nzidx = offsets >= 0
 
