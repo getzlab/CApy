@@ -46,7 +46,7 @@ static PyObject* query(PyObject* NPY_UNUSED(self), PyObject* args) {
    }
 
    // create numpy array
-   npy_intp dims[1] = {1};
+   npy_intp dims[1] = {n_offsets};
    int output_type;
    switch(width) {
       case 2: { output_type = NPY_UINT16; break; }
@@ -54,7 +54,7 @@ static PyObject* query(PyObject* NPY_UNUSED(self), PyObject* args) {
       case 8: { output_type = NPY_UINT64; break; }
    }
 
-   PyObject* buf_np = PyArray_SimpleNewFromData(n_offsets, dims, output_type, buf);
+   PyObject* buf_np = PyArray_SimpleNewFromData(1, dims, output_type, buf);
 
    // clean up
    Py_DECREF(offsets_arr);
