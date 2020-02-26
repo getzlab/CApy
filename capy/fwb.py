@@ -88,7 +88,7 @@ class FWB:
 			a += Qc.shape[0] 
 		nidx = offsets < 0
 
-		ret = fastmmap.query(self.filename, self.width, offsets).newbyteorder()
+		ret = fastmmap.query(self.filename, bytewidth, offsets).newbyteorder()
 		ret[nidx] = self.nullval
 
 		return ret
