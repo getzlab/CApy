@@ -30,7 +30,7 @@ static PyObject* query(PyObject* NPY_UNUSED(self), PyObject* args) {
 
    // copy into buffer
    npy_intp n_offsets = offsets_arr->dimensions[0];
-   uint64_t* offsets = (uint64_t*) offsets_arr->data;
+   int64_t* offsets = (int64_t*) offsets_arr->data;
    uint8_t* buf = calloc(n_offsets, width);
    if(buf == NULL) {
       fprintf(stderr, "Couldn't allocate output buffer!\n");
