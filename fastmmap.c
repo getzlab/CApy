@@ -11,7 +11,7 @@
 
 #include <numpy/arrayobject.h>
 
-static PyObject* query_mmap(PyObject* NPY_UNUSED(self), PyObject* args) {
+static PyObject* query(PyObject* NPY_UNUSED(self), PyObject* args) {
    // parse arguments
    char* fwb_path;
    uint8_t* width;
@@ -62,4 +62,21 @@ static PyObject* query_mmap(PyObject* NPY_UNUSED(self), PyObject* args) {
    close(fwb_fd);
 
    return buf_np;
+}
+
+PyMODINIT_FUNC PyInit_fastmmap(void) {
+   static PyMethodDef methods[] = {
+     { "query", query, METH_VARARGS, "Fast mmap query at given coordinates." },
+     {}
+   };
+
+   static struct PyModuleDef moddef = {
+     PyModuleDef_HEAD_INIT,
+     "fastmmap",
+     NULL,
+     -1,
+     methods
+   };
+
+   return PyModule_Create(&moddef);
 }
