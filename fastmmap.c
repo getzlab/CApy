@@ -50,12 +50,14 @@ static PyObject* query(PyObject* NPY_UNUSED(self), PyObject* args) {
    npy_intp dims[1] = {n_offsets};
    int output_type;
    switch(width) {
+      case 1: { output_type = NPY_UINT8; break; }
       case 2: { output_type = NPY_UINT16; break; }
       case 4: { output_type = NPY_UINT32; break; }
       case 8: { output_type = NPY_UINT64; break; }
    }
 
    PyObject* buf_np = PyArray_SimpleNewFromData(1, dims, output_type, buf);
+   ((PyArrayObject*) buf_np)->flags |= NPY_ARRAY_OWNDATA;
 
    // clean up
    Py_DECREF(offsets_arr);
