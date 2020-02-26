@@ -12,9 +12,9 @@ if ver_info < (3,5,4):
 setup(
     name = 'capy',
     version = "0.1",
-    #packages = [
-    #    'capy',
-    #],
+    packages = [
+        'capy',
+    ],
     description = 'Cancer Analysis Tools in Python',
     url = 'https://github.com/broadinstitute/capy',
     author = 'Julian Hess',
@@ -29,7 +29,7 @@ setup(
     ],
 	ext_modules = [Extension(
 	  'fastmmap',
-	  sources = ['fastmmap.c'],
+	  sources = ['capy/fastmmap.c'],
 	  include_dirs = [np.get_include()]
 	)]
 )
