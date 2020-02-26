@@ -78,5 +78,8 @@ PyMODINIT_FUNC PyInit_fastmmap(void) {
      methods
    };
 
+   // numpy will segfault if this isn't called!!!
+   import_array();
+
    return PyModule_Create(&moddef);
 }
