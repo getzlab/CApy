@@ -42,8 +42,9 @@ static PyObject* query(PyObject* NPY_UNUSED(self), PyObject* args) {
 	 buf += width;
 	 continue;
       }
-      for(int64_t j = 0; j < width; j++) *(buf++) = map[offsets[i] + j];
+      for(int64_t j = 0; j < width; j++) *(buf++) = map[width*offsets[i] + j];
    }
+   buf -= width*n_offsets;
 
    // create numpy array
    npy_intp dims[1] = {n_offsets};
