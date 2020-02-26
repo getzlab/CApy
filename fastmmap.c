@@ -14,8 +14,8 @@
 static PyObject* query(PyObject* NPY_UNUSED(self), PyObject* args) {
    // parse arguments
    char* fwb_path;
-   uint8_t* width;
-   PyArray_Dims* offsets_obj;
+   uint8_t width;
+   PyArray_Dims offsets_obj;
    if(!PyArg_ParseTuple(
      args, "sbO&",
      &fwb_path, &width, PyArray_IntpConverter, &offsets_obj
@@ -29,9 +29,9 @@ static PyObject* query(PyObject* NPY_UNUSED(self), PyObject* args) {
    uint8_t* map = (uint8_t*) mmap(NULL, sb.st_size, PROT_READ, MAP_PRIVATE, fwb_fd, 0);
 
    // copy into buffer
-   npy_intp n_offsets = offsets_obj->len;
-   npy_intp* offsets = offsets_obj->ptr;
-   uint8_t* buf = calloc(n_offsets, *width);
+   npy_intp n_offsets = offsets_obj.len;
+   npy_intp* offsets = offsets_obj.ptr;
+   uint8_t* buf = calloc(n_offsets, width);
    if(buf == NULL) {
       fprintf(stderr, "Couldn't allocate output buffer!\n");
       exit(1);
@@ -39,16 +39,16 @@ static PyObject* query(PyObject* NPY_UNUSED(self), PyObject* args) {
    for(int64_t i = 0; i < n_offsets; i++) {
       // FIXME: handle user-specified null value? or can we just do this in Python?
       if(offsets[i] < 0) {
-	 buf += *width;
+	 buf += width;
 	 continue;
       }
-      for(int64_t j = 0; j < *width; j++) *(buf++) = map[offsets[i] + j];
+      for(int64_t j = 0; j < width; j++) *(buf++) = map[offsets[i] + j];
    }
 
    // create numpy array
    npy_intp dims[1] = {1};
    int output_type;
-   switch(*width) {
+   switch(width) {
       case 2: { output_type = NPY_UINT16; break; }
       case 4: { output_type = NPY_UINT32; break; }
       case 8: { output_type = NPY_UINT64; break; }
