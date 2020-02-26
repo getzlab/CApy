@@ -15,10 +15,10 @@ static PyObject* query(PyObject* NPY_UNUSED(self), PyObject* args) {
    // parse arguments
    char* fwb_path;
    uint8_t width;
-   PyArray_Dims offsets_obj;
+   PyArrayObject* offsets_arr;
    if(!PyArg_ParseTuple(
      args, "sbO&",
-     &fwb_path, &width, PyArray_IntpConverter, &offsets_obj
+     &fwb_path, &width, PyArray_Converter, &offsets_arr
    )) return NULL;
 
    // memory map file
@@ -29,8 +29,8 @@ static PyObject* query(PyObject* NPY_UNUSED(self), PyObject* args) {
    uint8_t* map = (uint8_t*) mmap(NULL, sb.st_size, PROT_READ, MAP_PRIVATE, fwb_fd, 0);
 
    // copy into buffer
-   npy_intp n_offsets = offsets_obj.len;
-   npy_intp* offsets = offsets_obj.ptr;
+   npy_intp n_offsets = offsets_arr->dimensions[0];
+   uint64_t* offsets = (uint64_t*) offsets_arr->data;
    uint8_t* buf = calloc(n_offsets, width);
    if(buf == NULL) {
       fprintf(stderr, "Couldn't allocate output buffer!\n");
@@ -57,7 +57,7 @@ static PyObject* query(PyObject* NPY_UNUSED(self), PyObject* args) {
    PyObject* buf_np = PyArray_SimpleNewFromData(n_offsets, dims, output_type, buf);
 
    // clean up
-   PyDimMem_FREE(offsets);
+   Py_DECREF(offsets_arr);
    munmap(map, sb.st_size);
    close(fwb_fd);
 
