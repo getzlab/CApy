@@ -82,9 +82,9 @@ class FWB:
 		a = 0
 		for c, Qc in Q.groupby("chr"):
 			if self.debug:
-				print("Getting {}".format(c), file = sys.stderr)
+				print("Indexing {}".format(c), file = sys.stderr)
 
-			offsets[a:(a + Qc.shape[0])] = self._get_offset(pd.Series(c), Qc["start"])*bytewidth
+			offsets[a:(a + Qc.shape[0])] = self._get_offset(pd.Series(c), Qc["start"])
 			a += Qc.shape[0] 
 		nidx = offsets < 0
 
