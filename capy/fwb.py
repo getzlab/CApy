@@ -1,5 +1,6 @@
-import mmap
+import fastmmap
 import numpy as np
+import os
 import pandas as pd
 import sys
 
@@ -7,15 +8,13 @@ class FWB:
 	def __init__(self, filename, index = None, nullval = -1, debug = False):
 		# TODO: check if file exists
 		# ...
+		self.filename = filename
 
 		# TODO: check if index exists
 		if index is None:
 			index = filename[0:-1] + "i"
 
-		f = open(filename, "rb")
-		self.mapped_fwb = mmap.mmap(f.fileno(), 0, prot = mmap.PROT_READ)
-		f.close()
-		sz = self.mapped_fwb.size()
+		sz = os.path.getsize(filename)
 
 		self.fwi = pd.read_csv(index, sep = "\t", names = ["chr", "start", "end"], index_col = "chr")
 		self.fwi["cum_offset"] = np.cumsum(np.r_[0, (self.fwi["end"] - self.fwi["start"] + 1)[1:]])
@@ -87,14 +86,9 @@ class FWB:
 
 			offsets[a:(a + Qc.shape[0])] = self._get_offset(pd.Series(c), Qc["start"])*bytewidth
 			a += Qc.shape[0] 
-		nzidx = offsets >= 0
+		nidx = offsets < 0
 
-		# convert memory map to byte array
-		b = b''
-		for x in offsets[nzidx]:
-			b += self.mapped_fwb[x:(x + self.width//8)]
-
-		ret = np.full(Q.shape[0], self.nullval, dtype = np.dtype("i" + str(bytewidth)))
-		ret[nzidx] = np.frombuffer(b, dtype = np.dtype(">i" + str(bytewidth)))
+		ret = fastmmap.query(self.filename, self.width, offsets).newbyteorder()
+		ret[nidx] = self.nullval
 
 		return ret
