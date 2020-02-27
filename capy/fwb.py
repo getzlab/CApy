@@ -74,21 +74,17 @@ class FWB:
 
 		# TODO: handle widths < 8
 
-		Q = pd.DataFrame({ "chr" : chr, "start" : np.r_[start] })
-		offsets = np.zeros(Q.shape[0], dtype = np.int64)
+		Q = pd.DataFrame({ "chr" : np.r_[chr], "start" : np.r_[start] })
+		Q["offset"] = np.zeros(Q.shape[0], dtype = np.int64)
 		bytewidth = self.width//8
 
 		# group by chromosome to make lookups faster
-		a = 0
-		for c, Qc in Q.groupby("chr"):
+		for c, idx in Q.groupby("chr").indices.items():
 			if self.debug:
 				print("Indexing {}".format(c), file = sys.stderr)
+			Q.loc[idx, "offset"] = self._get_offset(pd.Series(c), Q.loc[idx, "start"])
 
-			offsets[a:(a + Qc.shape[0])] = self._get_offset(pd.Series(c), Qc["start"])
-			a += Qc.shape[0] 
-		nidx = offsets < 0
-
-		ret = fastmmap.query(self.filename, bytewidth, offsets).newbyteorder()
-		ret[nidx] = self.nullval
+		ret = fastmmap.query(self.filename, bytewidth, Q["offset"]).newbyteorder()
+		ret[Q["offset"] < 0] = self.nullval
 
 		return ret
