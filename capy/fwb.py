@@ -17,7 +17,7 @@ class FWB:
 		sz = os.path.getsize(filename)
 
 		self.fwi = pd.read_csv(index, sep = "\t", names = ["chr", "start", "end"], index_col = "chr")
-		self.fwi["cum_offset"] = np.cumsum(np.r_[0, (self.fwi["end"] - self.fwi["start"] + 1)[1:]])
+		self.fwi["cum_offset"] = np.cumsum(np.r_[0, (self.fwi["end"] - self.fwi["start"] + 1)[:-1]])
 
 		# TODO: check that index is compatible with filelength (and track width)
 		# TODO: other index checks:
