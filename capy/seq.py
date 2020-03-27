@@ -1,6 +1,7 @@
 from pyfaidx import Fasta as _Fasta, FastaNotFoundError as _FastaNotFoundError
 import numpy as _np
 import sys as _sys
+import os as _os
 import mmap as _mmap
 import pandas as _pd
 
@@ -61,7 +62,7 @@ class _FA:
 			print("Could not load reference genome!")
 
 # export public functions
-_fa = _FA();
+_fa = _FA(ref_fa_file = _os.environ["CAPY_REF_FA"] if "CAPY_REF_FA" in _os.environ else "/mnt/j/db/hg19/ref/hs37d5.fa");
 genome_region = _fa._genome_region
 chrpos2gpos = _fa._chrpos2gpos
 gpos2chrpos = _fa._gpos2chrpos
