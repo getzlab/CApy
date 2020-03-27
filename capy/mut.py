@@ -1,10 +1,12 @@
 from pyfaidx import Fasta as _Fasta
 import numpy as _np
 import sys as _sys
-import mmap as _mmap
+import fastmmap
 import pandas as _pd
 import tqdm as _tqdm
 from . import seq as _seq
+import os as _os
+import scipy.stats as _ss
 
 _byte_LuT = [None]*256
 for i in _np.r_[0:256].astype(_np.uint8):
@@ -83,3 +85,37 @@ def filter_mutations_against_gnomAD(M, ref = None, field_map = None, gnomad_dir 
 		M["gnomAD_" + base] = M["gpos"].isin(O.loc[O["allele"] == base, "gpos"])
 
 	return M.drop(columns = ["gpos", "SSNV_idx"])
+
+def filter_mutations_against_token_PoN(M, ponfile, ref = None):
+	if not all([x in M.columns for x in ["n_ref", "n_alt"]]):
+		print("You must provide alt/refcounts as MAF columns n_alt/n_ref, respectively!", file = _sys.stderr)
+		return
+
+	tok_hist = get_pon(M, ponfile, ref = ref)
+
+	# get beta distribution densities within each AF bin
+	beta_dens = _np.diff(_ss.beta.cdf(
+	 _np.r_[0, .001, .003, .03, .2, 1][None, :],
+	  M["n_alt"][:, None] + 1,
+	  M["n_ref"][:, None] + 1
+	), 1)
+
+	# dot this with cumulative distribution (upper) of relevant tokens
+	tok_hist_subset = tok_hist[:, 2:7]
+	tok_hist_subset[:, -1] += tok_hist[:, -1]
+	tok_cum_dist = _np.flip(_np.flip(tok_hist_subset, 1).cumsum(1), 1)/(tok_hist[0, :].sum())
+
+	return _np.log10(_np.sum(beta_dens*tok_cum_dist, 1) + 1e-20)
+
+def get_pon(M, ponfile, ref = None):
+	if not _os.path.isfile(ponfile):
+		print("Path to PoN file {} not found!".format(ponfile), file = _sys.stderr) 
+		return
+
+	gpos = _seq.chrpos2gpos(M["chr"], M["pos"], ref = ref)
+
+	return fastmmap.query(
+	             ponfile,
+	             2,
+	             _np.add.outer(8*gpos, _np.r_[0:8]).ravel()
+	           ).reshape([-1, 8])
