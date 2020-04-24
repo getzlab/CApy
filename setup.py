@@ -25,7 +25,8 @@ setup(
         'pyfaidx>=0.5.5.2',
         'tqdm>=4.32.1',
         'firecloud-dalmatian>=0.0.17',
-        'matplotlib>=3.1.1'
+        'matplotlib>=3.1.1',
+        'pyarrow>=0.17.0'
     ],
 	ext_modules = [Extension(
 	  'fastmmap',
