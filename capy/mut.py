@@ -112,7 +112,7 @@ def get_pon(M, ponfile, ref = None):
 		print("Path to PoN file {} not found!".format(ponfile), file = _sys.stderr) 
 		return
 
-	gpos = _seq.chrpos2gpos(M["chr"], M["pos"], ref = ref)
+	gpos = _np.array(_seq.chrpos2gpos(M["chr"], M["pos"], ref = ref))
 
 	return fastmmap.query(
 	             ponfile,
