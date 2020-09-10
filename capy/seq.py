@@ -77,6 +77,8 @@ class _gnomad:
 	def __init__(self, gnomad_dir = "/mnt/j/db/hg19/gnomad", bin_stem = "chr1-22", ref = None):
 		self.gnomad_dir = gnomad_dir
 		self.bin_stem = bin_stem
+		self.mm_1bit = None
+		self.ref = ref
 
 		gnomad_index = gnomad_dir + "/1bit/" + bin_stem + ".index.parquet"
 		if not _os.path.isfile(gnomad_index):
@@ -85,9 +87,6 @@ class _gnomad:
 
 		self.obit_idx = _pd.read_parquet(gnomad_dir + "/1bit/" + bin_stem + ".index.parquet")
 
-		self.ref = ref
-
-		self.mm_1bit = None
 		self.__mmap()
 
 	def __del__(self):
