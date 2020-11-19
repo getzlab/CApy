@@ -56,7 +56,7 @@ class _FA:
 	def __set_reference(self, ref):
 		try:
 			self.ref_fa_file = ref
-			self.ref_fa_obj = _Fasta(self.ref_fa_file)
+			self.ref_fa_obj = _Fasta(self.ref_fa_file, rebuild = False)
 			self.chrlens = _np.array([len(x) for x in self.ref_fa_obj.records.values()]);
 		except _FastaNotFoundError:
 			print("Could not load reference genome!")
