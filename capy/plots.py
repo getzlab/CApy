@@ -52,11 +52,15 @@ def lego(ch96_counts, fnum = None, axes = None):
 	else:
 		ax = axes
 
-	# TODO: specify z-index of each bar individually
-	#np.fliplr(xc + np.r_[0:88:11][:, None] + yc)
-
-	ax.bar3d(xc.ravel(), yc.ravel(), 0, 0.8, 0.8, ch96_counts[ch96_grid].ravel(), lego_colors.reshape([96, 3, -1]).squeeze(), edgecolor = 'k', shade = False, zsort = 'max')
-	ax.set_xlim3d(12.4, -0.6)
+	ax.view_init(54, -124) 
+	for i, (x, y, z, color) in enumerate(zip(
+	  np.fliplr(xc).ravel(),
+	  np.fliplr(np.flipud(yc)).ravel(),
+	  np.fliplr(ch96_counts[ch96_grid]).ravel(),
+	  np.fliplr(lego_colors).reshape([96, 3, -1]).squeeze()
+	)):
+		b3 = ax.bar3d(x, y, 0, 0.8, 0.8, z, color, edgecolor = 'k', shade = False, zsort = "max")
+		b3.set_sort_zpos(i)
 	ax.set_xticks([])
 	ax.set_yticks([])
 
