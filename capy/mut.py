@@ -119,3 +119,32 @@ def get_pon(M, ponfile, ref = None):
 	             2,
 	             _np.add.outer(8*gpos, _np.r_[0:8]).ravel()
 	           ).reshape([-1, 8])
+
+def map_mutations_to_targets(M, T, allow_multimap = False):
+	Ma = M.loc[:, ["chr", "pos"]].reset_index(drop = True).reset_index().sort_values(["chr", "pos"]).to_numpy()
+	Ta = T.loc[:, ["chr", "start", "end"]].reset_index(drop = True).reset_index().sort_values(["chr", "start", "end"]).to_numpy()
+
+	i = 0
+	d = {}
+	for m in Ma:
+		# advance targets until target start <= mutation position
+		while (m[1] > Ta[i, 1] or (m[2] > Ta[i, 3] and m[1] == Ta[i, 1])) and i < Ta.shape[0] - 1:
+			i += 1
+
+		# loop over all targets that mutation may overlap
+		j = 0
+		while i + j < Ta.shape[0] - 1 and m[2] >= Ta[i + j, 2] and m[2] <= Ta[i + j, 3] and m[1] == Ta[i + j, 1]:
+			if allow_multimap:
+				raise NotImplementedError("Mapping to mutiple overlapping targets not yet supported ")
+				if m[0] not in d:
+					d[m[0]] = {Ta[i + j, 0]}
+				else:
+					d[m[0]].add(Ta[i + j, 0])
+				j += 1
+			else:
+				d[m[0]] = Ta[i + j, 0]
+				break
+
+	d = _pd.Series(d)
+	M["targ_idx"] = -1
+	M.loc[d.index, "targ_idx"] = d
