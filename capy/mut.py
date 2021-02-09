@@ -120,7 +120,7 @@ def get_pon(M, ponfile, ref = None):
 	             _np.add.outer(8*gpos, _np.r_[0:8]).ravel()
 	           ).reshape([-1, 8])
 
-def map_mutations_to_targets(M, T, allow_multimap = False):
+def map_mutations_to_targets(M, T, allow_multimap = False, inplace = True):
 	Ma = M.loc[:, ["chr", "pos"]].reset_index(drop = True).reset_index().sort_values(["chr", "pos"]).to_numpy()
 	Ta = T.loc[:, ["chr", "start", "end"]].reset_index(drop = True).reset_index().sort_values(["chr", "start", "end"]).to_numpy()
 
@@ -146,5 +146,8 @@ def map_mutations_to_targets(M, T, allow_multimap = False):
 				break
 
 	d = _pd.Series(d)
-	M["targ_idx"] = -1
-	M.loc[d.index, "targ_idx"] = d
+	if inplace:
+		M["targ_idx"] = -1
+		M.loc[d.index, "targ_idx"] = d
+	else:
+		return d
