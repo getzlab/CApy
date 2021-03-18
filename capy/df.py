@@ -13,3 +13,7 @@ def multimap(df1, df2):
       right_on = orig_cols,
       how = "left"
     )["_multimap_"].astype(_pd.Int64Dtype())
+
+def merge_keep_index(df1, df2, **kwargs):
+    orig_name = df1.index.name
+    return df1.rename_axis("_merge_").reset_index().merge(df2, **kwargs).set_index("_merge_").rename_axis(orig_name)
