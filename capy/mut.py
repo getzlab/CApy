@@ -37,6 +37,20 @@ def standardize_maf(m):
 		m = m.rename(columns={matches : rf[i][0]})
 	return(m)
 
+# Converts single maf dataframe to M format
+# Unlike matlab version, string indices are used
+def maf2M(m):
+	M = dict()
+	M['mut'] = m
+	
+	for f in ['patient','gene']:
+		if f in m.columns:
+			u,uj,ct = _np.unique(m[f],return_inverse=True,return_counts=True)
+			M[f] = _pd.DataFrame(index=u)
+			M[f]['nmut'] = ct
+			M['mut'][f+'_idx'] = uj
+
+	return(M)
 
 
 def filter_mutations_against_gnomAD(M, ref = None, field_map = None, gnomad_dir = None):
