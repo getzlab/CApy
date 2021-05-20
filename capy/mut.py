@@ -12,6 +12,47 @@ _byte_LuT = [None]*256
 for i in _np.r_[0:256].astype(_np.uint8):
 	_byte_LuT[i] = _np.flatnonzero(_np.unpackbits(i))
 
+# Replace MAF spec column names with human readable oens
+def standardize_maf(m):
+	rf = [
+        ['gene','Hugo_Symbol','Gene_name'],
+        ['patient','pat','Tumor_Sample_Barcode','Patient_name','sample'],
+        ['chr','Chromosome'],
+        ['pos','Position','start','Start_position'],
+        ['ref_allele','Reference_Allele','ref'],
+        ['newbase','Tumor_Allele','Tum_allele','Alt_allele','Alternate_allele','Tumor_Seq_Allele2','tum_allele2'],
+        ['type','Variant_Classification'],
+        ['classification','Variant_Type']]
+
+	f = m.columns
+	for i in range(0,len(rf)):
+		matches = f[f.isin(rf[i])]
+		if len(matches)==0:
+			continue
+		elif len(matches)>1:
+			print(f"Mutation file contains multiple columns for {rf[i][0]} info:")
+			print(matches)
+			
+		matches = rf[i][0] if rf[i][0] in matches else matches[0]
+		m = m.rename(columns={matches : rf[i][0]})
+	return(m)
+
+# Converts single maf dataframe to M format
+# Unlike matlab version, string indices are used
+def maf2M(m):
+	M = dict()
+	M['mut'] = m
+	
+	for f in ['patient','gene']:
+		if f in m.columns:
+			u,uj,ct = _np.unique(m[f],return_inverse=True,return_counts=True)
+			M[f] = _pd.DataFrame(index=u)
+			M[f]['nmut'] = ct
+			M['mut'][f+'_idx'] = uj
+
+	return(M)
+
+
 def filter_mutations_against_gnomAD(M, ref = None, field_map = None, gnomad_dir = None):
 	# set gnomAD bitwise track reference directory
 	_seq.set_gnomad_ref_params(gnomad_dir = gnomad_dir)
