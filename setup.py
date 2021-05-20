@@ -22,10 +22,13 @@ setup(
     install_requires = [
         'pandas>=0.24.1',
         'numpy>=1.16.4',
+        'scipy>=1.5.4',
+        'statsmodels>=0.12.2',
         'pyfaidx>=0.5.5.2',
         'tqdm>=4.32.1',
         'firecloud-dalmatian>=0.0.17',
         'matplotlib>=3.1.1',
+        'adjustText>=0.7.3',
         'pyarrow>=0.17.0'
     ],
 	ext_modules = [Extension(

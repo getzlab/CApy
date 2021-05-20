@@ -2,6 +2,10 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
+from statsmodels.stats import multitest
+from adjustText import adjust_text
+
+from capy import num as num
 
 #
 # LEGO plots {{{
@@ -106,3 +110,49 @@ def spine_bounds(ax = None, t = None, r = None, b = None, l = None):
 		ax.spines[n].set_bounds(*s)
 
 # }}}
+
+#
+# Q-Q
+
+def QQ(pvalues, labels = None, sig_thresh = 0.1, near_sig_thresh = 0.25, fnum = None):
+    si = np.argsort(-np.log10(pvalues))
+    logp = -np.log10(pvalues)[si]
+    n_p = len(logp)
+
+    # expected quantiles
+    x = -np.log10(np.r_[n_p:0:-1]/(n_p + 1))
+
+    #
+    # FDR
+    _, q, _, _ = multitest.multipletests(pvalues[si], method = "fdr_bh")
+    sig_idx = q < sig_thresh
+    n_sig_idx = q < near_sig_thresh
+
+    fdr_color_idx = np.c_[sig_idx, n_sig_idx]@np.r_[2, 1]
+
+    #                      nonsig     near sig   <padding>     sig
+    fdr_colors = np.array([[0, 0, 1], [0, 1, 1], [-1, -1, -1], [1, 0, 0]])
+
+    #
+    # plot
+    f = plt.figure(fnum); plt.clf()
+    plt.scatter(x, logp, c = fdr_colors[fdr_color_idx])
+
+    # 1:1 line
+    plt.plot(plt.xlim(), plt.xlim(), color = 'k', linestyle = ':')
+
+    # confidence interval (TODO)
+
+    #
+    # labels (if given)
+    if labels is not None:
+        if len(labels) != len(x):
+            raise ValueError("Length of labels must match length of p-value array")
+        labels = labels[si]
+        label_plt = [plt.text(x, y, l) for x, y, l in zip(x[n_sig_idx], logp[n_sig_idx], labels[n_sig_idx])]
+        adjust_text(label_plt, arrowprops = { 'color' : 'k', "arrowstyle" : "-" })
+
+    plt.xlabel("Expected quantile (-log10)")
+    plt.ylabel("Observed quantile (-log10)")
+
+    return f
