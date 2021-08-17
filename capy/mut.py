@@ -192,3 +192,14 @@ def map_mutations_to_targets(M, T, allow_multimap = False, inplace = True):
 		M.loc[d.index, "targ_idx"] = d
 	else:
 		return d
+
+def convert_chr(chrnames):
+	# maps (chr)1-22,X,Y,MT -> 1-22,23,24,0
+	chrrange = list(range(0, 25))
+	names = ["chr" + str(x) for x in ["MT"] + list(range(1, 23)) + ["X", "Y"]] + \
+            [str(x) for x in ["MT"] + list(range(1, 23)) + ["X", "Y"]]
+	mapper = dict(zip(names, 2*chrrange))
+	def applymap(x):
+		return mapper[x] if x in mapper else x
+
+	return _pd.Series(chrnames).apply(applymap)
