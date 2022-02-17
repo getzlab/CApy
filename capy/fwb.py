@@ -24,7 +24,9 @@ class FWB:
 		# * no overlapping intervals
 
 		# sort to allow for binary search within a chromosome
-		self.fwi = self.fwi.groupby("chr").apply(lambda x : x.sort_values("start")).droplevel(0)
+		self.fwi = self.fwi.groupby("chr").apply(lambda x : x.sort_values("start"))
+		if self.fwi.index.nlevels > 1: # due to a pandas bug
+			self.fwi = self.fwi.droplevel(0)
 
 		# infer width
 		tot_len = np.sum(self.fwi["end"] - self.fwi["start"] + 1)
