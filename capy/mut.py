@@ -174,7 +174,7 @@ def map_mutations_to_targets(M, T, allow_multimap = False, inplace = True, chrco
 
 		# loop over all targets that mutation may overlap
 		j = 0
-		while i + j < Ta.shape[0] - 1 and m[2] >= Ta[i + j, 2] and m[2] <= Ta[i + j, 3] and m[1] == Ta[i + j, 1]:
+		while i + j < Ta.shape[0] and m[2] >= Ta[i + j, 2] and m[2] <= Ta[i + j, 3] and m[1] == Ta[i + j, 1]:
 			if allow_multimap:
 				raise NotImplementedError("Mapping to mutiple overlapping targets not yet supported ")
 				if m[0] not in d:
