@@ -13,7 +13,7 @@ import pandas as _pd
 # so we don't have to instantiate it every time genome_region is called
 class _FA:
 	def __init__(self, ref_fa_file = "/mnt/j/db/hg19/ref/hs37d5.fa"):
-		self.__set_reference(ref_fa_file)
+		self._set_reference(ref_fa_file)
 
 	def __auto_reset_reference(f):
 		def inner(self, *args, ref = None, **kwargs):
@@ -21,7 +21,7 @@ class _FA:
 				ref = self.ref_fa_file
 
 			if ref != self.ref_fa_file:
-				self.__set_reference(ref)
+				self._set_reference(ref)
 				print("NOTE: switched reference to {}".format(ref), file = _sys.stderr)
 
 			return f(self, *args, ref = ref, **kwargs)
@@ -53,7 +53,7 @@ class _FA:
 	def _get_chrlens(self, ref = None):
 		return self.chrlens
 
-	def __set_reference(self, ref):
+	def _set_reference(self, ref):
 		try:
 			self.ref_fa_file = ref
 			self.ref_fa_obj = _Fasta(self.ref_fa_file, rebuild = False)
@@ -67,6 +67,7 @@ genome_region = _fa._genome_region
 chrpos2gpos = _fa._chrpos2gpos
 gpos2chrpos = _fa._gpos2chrpos
 get_chrlens = _fa._get_chrlens
+set_reference = _fa._set_reference
 
 #
 # gnomAD functions
