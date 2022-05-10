@@ -76,7 +76,7 @@ class FWB:
 
 		# TODO: handle widths < 8
 
-		Q = pd.DataFrame({ "chr" : np.r_[chr], "start" : np.r_[start] })
+		Q = pd.DataFrame({ "chr" : chr, "start" : np.r_[start] })
 		Q["offset"] = np.zeros(Q.shape[0], dtype = np.int64)
 		bytewidth = self.width//8
 
