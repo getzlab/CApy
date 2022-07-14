@@ -156,3 +156,8 @@ def QQ(pvalues, labels = None, sig_thresh = 0.1, near_sig_thresh = 0.25, fnum = 
     plt.ylabel("Observed quantile (-log10)")
 
     return f
+
+#
+# pixel scatterplot
+def pixplot(x, y, **kwargs):
+    return plt.plot(x, y, marker = ',', linewidth = 0, **kwargs)
