@@ -199,7 +199,11 @@ def convert_chr(chrnames):
 	names = ["chr" + str(x) for x in ["MT"] + list(range(1, 23)) + ["X", "Y"]] + \
             [str(x) for x in ["MT"] + list(range(1, 23)) + ["X", "Y"]]
 	mapper = dict(zip(names, 2*chrrange))
-	def applymap(x):
-		return mapper[x] if x in mapper else x
+	return _pd.Series(chrnames).apply(lambda x : mapper[x] if x in mapper else x)
 
-	return _pd.Series(chrnames).apply(applymap)
+def convert_chr_back(chridxs):
+	# maps  1-22,23,24,0 -> chr1-22,X,Y,MT
+	chrrange = list(range(0, 25))
+	names = ["chr" + str(x) for x in ["MT"] + list(range(1, 23)) + ["X", "Y"]]
+	mapper = dict(zip(chrrange, names))
+	return _pd.Series(chridxs).apply(lambda x : mapper[x] if x in mapper else x)
