@@ -20,7 +20,7 @@ setup(
     author = 'Julian Hess',
     author_email = 'jhess@broadinstitute.org',
     install_requires = [
-        'pandas>=0.24.1',
+        'pandas==1.4.2',
         'numpy>=1.16.4',
         'scipy>=1.5.4',
         'statsmodels>=0.12.2',
