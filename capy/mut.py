@@ -18,7 +18,7 @@ def standardize_maf(m):
         ['gene','Hugo_Symbol','Gene_name'],
         ['patient','pat','Tumor_Sample_Barcode','Patient_name','sample'],
         ['chr','Chromosome'],
-        ['pos','Position','start','Start_position'],
+        ['pos','Position','start','Start_position','Start_Position'],
         ['ref_allele','Reference_Allele','ref'],
         ['newbase','Tumor_Allele','Tum_allele','Alt_allele','Alternate_allele','Tumor_Seq_Allele2','tum_allele2'],
         ['type','Variant_Classification'],
