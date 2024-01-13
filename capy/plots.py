@@ -112,6 +112,11 @@ def spine_bounds(ax = None, t = None, r = None, b = None, l = None):
 # }}}
 
 #
+# get default color cycle
+def get_default_color_cycle():
+    return plt.rcParams['axes.prop_cycle'].by_key()['color']
+
+#
 # Q-Q
 
 def QQ(pvalues, labels = None, sig_thresh = 0.1, near_sig_thresh = 0.25, fnum = None):
