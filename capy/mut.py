@@ -161,9 +161,9 @@ def get_pon(M, ponfile, ref = None):
 	             _np.add.outer(8*gpos, _np.r_[0:8]).ravel()
 	           ).reshape([-1, 8])
 
-def map_mutations_to_targets(M, T, allow_multimap = False, inplace = True, chrcol = "chr", poscol = "pos", startcol = "start", endcol = "end"):
-	Ma = M.loc[:, [chrcol, poscol]].reset_index(drop = True).reset_index().sort_values([chrcol, poscol]).to_numpy()
-	Ta = T.loc[:, [chrcol, startcol, endcol]].reset_index(drop = True).reset_index().sort_values([chrcol, startcol, endcol]).to_numpy()
+def map_mutations_to_targets(M, T, allow_multimap = False, inplace = True, chrcol_M = "chr", poscol = "pos", chrcol_T = "chr", startcol = "start", endcol = "end"):
+	Ma = M.loc[:, [chrcol_M, poscol]].reset_index(drop = True).reset_index().sort_values([chrcol_M, poscol]).to_numpy()
+	Ta = T.loc[:, [chrcol_T, startcol, endcol]].reset_index(drop = True).reset_index().sort_values([chrcol_T, startcol, endcol]).to_numpy()
 
 	i = 0
 	d = {}
