@@ -61,6 +61,46 @@ class _FA:
 		except _FastaNotFoundError:
 			print("Could not load reference genome!")
 
+_chrmap = dict(zip(["chr" + str(x) for x in list(range(1, 23)) + ["X", "Y"]], range(1, 25)))
+
+def parse_cytoband(cytoband):
+    # some cytoband files have a header, some don't; we need to check
+    has_header = False
+    with open(cytoband, "r") as f:
+        if f.readline().startswith("chr\t"):
+            has_header = True
+
+    cband = _pd.read_csv(cytoband, sep = "\t", names = ["chr", "start", "end", "band", "stain"] if not has_header else None)
+    cband["chr"] = cband["chr"].apply(lambda x : _chrmap[x])
+
+    chrs = cband["chr"].unique()
+    ints = dict(zip(chrs, [{0} for _ in range(0, len(chrs))]))
+    last_end = None
+    last_stain = None
+    last_chrom = None
+    for _, chrom, start, end, _, stain in cband.itertuples():
+        if start == 0:
+            if last_end is not None:
+                ints[last_chrom].add(last_end)
+        if stain == "acen" and last_stain != "acen":
+            ints[chrom].add(start)
+        if stain != "acen" and last_stain == "acen":
+            ints[chrom].add(start)
+        
+        last_end = end
+        last_stain = stain
+        last_chrom = chrom
+    ints[chrom].add(end)
+
+    CI = _np.full([len(ints), 4], 0)
+    for c in chrs:
+        CI[c - 1, :] = sorted(ints[c])
+
+    return _pd.DataFrame(
+      _np.c_[_np.tile(_np.c_[_np.r_[1:25]], [1, 2]).reshape(-1, 1), CI.reshape(-1, 2)],
+      columns = ["chr", "start", "end"]
+    )
+
 # export public functions
 _fa = _FA(ref_fa_file = _os.environ["CAPY_REF_FA"] if "CAPY_REF_FA" in _os.environ else "/mnt/j/db/hg19/ref/hs37d5.fa");
 genome_region = _fa._genome_region
