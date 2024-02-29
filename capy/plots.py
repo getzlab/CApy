@@ -57,15 +57,16 @@ def lego(ch96_counts, fnum = None, axes = None):
 	else:
 		ax = axes
 
-	ax.view_init(54, -124) 
+	ax.view_init(30, -127.5)
 	for i, (x, y, z, color) in enumerate(zip(
 	  np.fliplr(xc).ravel(),
 	  np.fliplr(np.flipud(yc)).ravel(),
 	  np.fliplr(ch96_counts[ch96_grid]).ravel(),
 	  np.fliplr(lego_colors).reshape([96, 3, -1]).squeeze()
 	)):
-		b3 = ax.bar3d(x, y, 0, 0.8, 0.8, z, color, edgecolor = 'k', shade = False, zsort = "max")
+		b3 = ax.bar3d(x, y, 0, 0.8, 0.8, z, color, edgecolor = 'k', shade = False, zsort = "max", linewidth = 0.5)
 		b3.set_sort_zpos(i)
+	ax.set_box_aspect([ch96_counts.max()/8, ch96_counts.max()/12, ch96_counts.max()/15])
 	ax.set_xticks([])
 	ax.set_yticks([])
 
