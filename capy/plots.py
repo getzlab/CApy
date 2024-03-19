@@ -74,6 +74,32 @@ def lego(ch96_counts, fnum = None, axes = None):
 
 # }}}
 
+#
+# signature barplots {{{
+
+colors_bar = np.tile(
+  (lego_colors[[0, 4]].reshape([-1, 3])[0::4])[[4, 5, 3, 1, 0, 2]],
+  [16, 1, 1]
+).reshape([96, 3], order = "F")
+
+def sigbar(ch96_counts, fnum = None, axes = None):
+    if axes is None:
+        if fnum is None:
+            f = plt.figure(); plt.clf()
+            fnum = f.number
+        else:
+            f = plt.figure(fnum)
+        ax = plt.gca()
+    else:
+        ax = axes
+
+    ax.bar(np.r_[0:96], ch96_counts, color = colors_bar, edgecolor = "k", linewidth = 0.5)
+    ax.set_xlim([-1, 96])
+    for j in np.r_[15:95:16] + 0.5:
+        ax.axvline(j, linestyle = ":", color = "k")
+
+# }}}
+
 def logticks(mn, mx):
 	minb = np.floor(np.log10(mn))
 	maxb = np.floor(np.log10(mx))
